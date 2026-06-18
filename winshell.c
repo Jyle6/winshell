@@ -36,6 +36,25 @@ int main() {
             continue;
         }
         if (!strncmp(prompt, "exit", 5)) break;
+        if (!strncmp(prompt, "out ", 4)) {
+            write(stdout, prompt + 4, strlen(prompt + 4));
+            write(stdout, "\n", 1);
+            continue;
+        }
+        if (!strncmp(prompt, "lsdir", 6)) {
+            system("dir");
+            continue;
+        }
+        if (!strncmp(prompt, "cmd ", 4)) {
+            prompt[0] = '/';
+            prompt[1] = 'c';
+            prompt[2] = ' ';
+            CreateProcessA("C:\\Windows\\System32\\cmd.exe", prompt, NULL, NULL, TRUE, 0, NULL, cwd, &si, &pi);
+            WaitForSingleObject(pi.hProcess, INFINITE);
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
+            continue;
+        }
         CreateProcessA(NULL, prompt, NULL, NULL, TRUE, 0, NULL, cwd, &si, &pi);
         WaitForSingleObject(pi.hProcess, INFINITE);
         CloseHandle(pi.hProcess);
