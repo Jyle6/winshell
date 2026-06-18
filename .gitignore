@@ -1,0 +1,6 @@
+*
+!.gitignore
+!.gitattributes
+!CMakeLists.txt
+!License
+!winshell.c
