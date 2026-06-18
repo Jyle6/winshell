@@ -31,6 +31,11 @@ int main() {
         write(stdout, "> ", 2);
         prompt_length = read(stdin, prompt, 256);
         prompt[prompt_length - 2] = 0;
+        if (!strncmp(prompt, "cd ", 3)) {
+            SetCurrentDirectoryA(prompt + 3);
+            continue;
+        }
+        if (!strncmp(prompt, "exit", 5)) break;
         CreateProcessA(NULL, prompt, NULL, NULL, TRUE, 0, NULL, cwd, &si, &pi);
         WaitForSingleObject(pi.hProcess, INFINITE);
         CloseHandle(pi.hProcess);
