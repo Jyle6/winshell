@@ -24,11 +24,14 @@ int main() {
     LPSTR cwd = __builtin_alloca(256);
     DWORD cwd_size;
     LPSTR prompt = __builtin_alloca(256);
+    LPSTR buffered = __builtin_alloca(256 + 256);
     #define prompt_length cwd_size // Alias
     while (TRUE) {
         cwd_size = GetCurrentDirectoryA(256, cwd);
-        write(stdout, cwd, cwd_size);
-        write(stdout, "> ", 2);
+        __builtin_memcpy(buffered, cwd, cwd_size);
+        buffered[cwd_size] = '>';
+        buffered[cwd_size+1] = ' ';
+        write(stdout, buffered, cwd_size+2);
         prompt_length = read(stdin, prompt, 256);
         prompt[prompt_length - 2] = 0;
         if (!strncmp(prompt, "cd ", 3)) {
@@ -37,8 +40,10 @@ int main() {
         }
         if (!strncmp(prompt, "exit", 5)) break;
         if (!strncmp(prompt, "out ", 4)) {
-            write(stdout, prompt + 4, strlen(prompt + 4));
-            write(stdout, "\n", 1);
+            prompt_length = strlen(prompt + 4);
+            __builtin_memcpy(buffered, prompt + 4, prompt_length);
+            buffered[prompt_length] = '\n';
+            write(stdout, buffered, prompt_length+1);
             continue;
         }
         if (!strncmp(prompt, "lsdir", 6)) {
